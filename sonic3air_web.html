@@ -6,7 +6,6 @@
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Sonic 3 A.I.R.</title>
 <link rel="apple-touch-icon" sizes="256x256" href="icon.png">
-<link rel="icon" type="x-icon" href="icon.png">
 <link rel="manifest" href="manifest.json">
 <style>body{background:black;color:white;font-family:arial;margin:0;padding:none;overflow:hidden;-webkit-user-select:none;}.emscripten{padding-right:0;margin-left:auto;margin-right:auto;display:block}div.emscripten{text-align:center}div.emscripten_border{border:0 none;}canvas.emscripten{border:0 none;background-color:#000}.spinner{height:30px;width:30px;margin:0;margin-top:20px;margin-left:20px;display:inline-block;vertical-align:top;-webkit-animation:rotation .8s linear infinite;-moz-animation:rotation .8s linear infinite;-o-animation:rotation .8s linear infinite;animation:rotation .8s linear infinite;border-left:5px solid #ebebeb;border-right:5px solid #ebebeb;border-bottom:5px solid #ebebeb;border-top:5px solid #787878;border-radius:100%;background-color:#bdd72e}@-webkit-keyframes rotation{from{-webkit-transform:rotate(0)}to{-webkit-transform:rotate(360deg)}}@-moz-keyframes rotation{from{-moz-transform:rotate(0)}to{-moz-transform:rotate(360deg)}}@-o-keyframes rotation{from{-o-transform:rotate(0)}to{-o-transform:rotate(360deg)}}@keyframes rotation{from{transform:rotate(0)}to{transform:rotate(360deg)}}#status{display:inline-block;vertical-align:top;margin-top:30px;margin-left:20px;font-size:1em;font-weight:700;color:#787878}#progress{height:20px;width:250px}
 .hidden{display:none !important;}
@@ -67,7 +66,7 @@ input[type="file"] {display: none;}
 #ios_workaround{
 	width: 100%;
 	height: 100%;
-	position: flex;
+	position: absolute;
 	top: 0;
 	left: 0;
 	text-align: center;
@@ -77,34 +76,6 @@ input[type="file"] {display: none;}
 	cursor: default;
 	background-color: rgba(0,0,0,50%);
 }
-.output-button {
-        border: 2px solid white;
-        width: 125px;
-        height: 125px;
-        margin: 5px;
-        border-radius: 5px;
-        cursor: pointer;
-        background-color: rgba(255,255,255,0);
-        color: #FFFFFF;
-        position: absolute;
-		bottom: 0;
-		left: 40%;
-        font-family: "Lucida Console", Monaco, monospace;
-      }
-.output-button-2 {
-        border: 2px solid white;
-        width: 125px;
-        height: 125px;
-        margin: 5px;
-        border-radius: 5px;
-        cursor: pointer;
-        background-color: rgba(255,255,255,0);
-        color: #FFFFFF;
-        position: absolute;
-        bottom: 0;
-        right: 40%;
-        font-family: "Lucida Console", Monaco, monospace;
-      }
 </style>
 <script src="browserfs.min.js"></script>
 <script>
@@ -154,9 +125,9 @@ function hideIOSoverlay(){
 function onPageLoaded(){
 	//Uncomment the service worker below for actual releases to force files to be cached so you can play offline.
 	//Leave it commented when testing because otherwise when you refresh the page you'll still be getting cached data.
-	if('serviceWorker' in navigator) {
+	/*if('serviceWorker' in navigator) {
     	navigator.serviceWorker.register('worker.js');
-	};
+	};*/
 	var startup = document.getElementById("startup");
 	startup.style.display = 'none';
 	
@@ -352,19 +323,11 @@ function installS3kFile(fileInput) {
 			return;
 		}
 
-// WIP hiding buttons function after game launch
-
-function hideButtonUI(){
-		document.getElementByClassName(ModdedButton).style.visibility = "hidden";
-		ModdedButton[i].style.display = 'none';
-	}
-		
 		//If this call throws an exception with error code 20, it means the ROM already exists.
 		//But that shouldn't happen because we wouldn't be calling this if it already existed.
         Module['FS_createDataFile']('/sonic3air/savedata/', 'Sonic_Knuckles_wSonic3.bin', data, true, true, true);
 		
 		hidePageUI();
-		hideButtonUI();
 		
 		//Save into IndexedDB
 		var internalFolder = FS.analyzePath("/sonic3air/___internal/");
@@ -378,15 +341,14 @@ function hideButtonUI(){
 </script>
 </head>
 <body>
-    </div>
 <div id="startup"><h2>Loading...</h2></div>
 <div class="spinner pageUI hidden" id=spinner></div>
 <div class="emscripten pageUI hidden" id=status>Downloading...</div>
 <div class="emscripten pageUI hidden"><progress hidden id=progress max=100 value=0></progress></div>
 <div class="file_select hidden">
 	<span>To run the game, Sonic 3 A.I.R. requires an original copy of the Sonic 3 and Knuckles ROM. 
-	Please provide Sonic_Knuckles_wSonic3.bin</span><br/>
-	<span id="s3kPromptMessage"></span><br/>
+	You can get this file by purchasing the game on Steam for Windows, Mac or Linux.</span><br/>
+	<span id="s3kPromptMessage">Please provide Sonic_Knuckles_wSonic3.bin:</span><br/>
 	<label for="fileSelector" class="fileSelector">
 	    Select File...
 	</label>
@@ -424,10 +386,7 @@ function hideButtonUI(){
 <script>
 var statusElement = document.getElementById("status"),
     progressElement = document.getElementById("progress"),
-    spinnerElement = document.getElementById("spinner"),
-    ModdedElement = document.getElementById("ModdedCode"),
-    ModdedButton = document.getElementById("ModdedButton");
-
+    spinnerElement = document.getElementById("spinner");
 var Module = {
     preRun: function(){
 		onPageLoaded();
